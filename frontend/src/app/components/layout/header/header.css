@@ -1,0 +1,68 @@
+.header {
+    height: 70px;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.contact-link {
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.contact-link:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+.spacer {
+    flex: 1;
+}
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.username {
+    font-weight: 500;
+    color: white;
+}
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.3rem 1rem 0.3rem 0.4rem;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+}
+.user-profile:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+.actor-icon {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    flex-shrink: 0;
+    object-fit: contain;
+    filter: brightness(1.5) drop-shadow(0 0 5px rgba(167, 139, 250, 0.4));
+    opacity: 0.9;
+    background: none;
+    padding: 2px;
+    border-radius: 10px;
+    border: none;
+}
+.logout-btn {
+    display: none;
+}

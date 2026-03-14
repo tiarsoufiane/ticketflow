@@ -1,0 +1,88 @@
+﻿<div class="dashboard-container">
+    <div class="header" data-aos="fade-down">
+        <h1>Bienvenue sur votre Tableau de Bord</h1>
+        <p class="subtitle">Suivez l'état de vos projets et tickets en temps réel.</p>
+    </div>
+    <div class="stats-grid">
+        <div class="card stat-card total" data-aos="zoom-in" data-aos-delay="100">
+            <div class="stat-icon"></div>
+            <div class="info">
+                <span class="value">{{ stats.totalTickets }}</span>
+                <span class="label">Tickets Totaux</span>
+            </div>
+        </div>
+        <div class="card stat-card ouvert" data-aos="zoom-in" data-aos-delay="200">
+            <div class="stat-icon"></div>
+            <div class="info">
+                <span class="value">{{ stats.ouvert }}</span>
+                <span class="label">Ouverts</span>
+            </div>
+        </div>
+        <div class="card stat-card en-cours" data-aos="zoom-in" data-aos-delay="300">
+            <div class="stat-icon"></div>
+            <div class="info">
+                <span class="value">{{ stats.enCours }}</span>
+                <span class="label">En cours</span>
+            </div>
+        </div>
+        <div class="card stat-card resolu" data-aos="zoom-in" data-aos-delay="400">
+            <div class="stat-icon"></div>
+            <div class="info">
+                <span class="value">{{ stats.resolu }}</span>
+                <span class="label">Résolus</span>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="card content-card projects-section" data-aos="fade-right">
+            <div class="card-header">
+                <h3>Mes Projets Actifs</h3>
+                <a routerLink="/projects" class="view-all">Voir tout</a>
+            </div>
+            <div class="projects-list">
+                <div *ngFor="let projet of stats.projets" class="project-item clickable"
+                    [routerLink]="['/projects', projet.id]">
+                    <div class="project-info">
+                        <span class="project-name">{{ projet.nom }}</span>
+                        <span class="project-date">{{ projet.dateDebut | date:'dd/MM/yyyy' }} - {{ projet.dateLivraison
+                            | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="project-action">
+                        <span class="arrow">→</span>
+                    </div>
+                </div>
+                <div *ngIf="stats.projets?.length === 0" class="empty-state">
+                    Aucun projet actif.
+                </div>
+            </div>
+        </div>
+        <div class="card content-card tickets-section" data-aos="fade-left">
+            <div class="card-header">
+                <h3>Derniers Tickets</h3>
+                <a routerLink="/tickets" class="view-all">Voir tout</a>
+            </div>
+            <div class="tickets-list">
+                <div *ngFor="let ticket of stats.latestTickets" class="ticket-item clickable"
+                    [routerLink]="['/tickets', ticket.id]">
+                    <div class="ticket-main">
+                        <span class="ticket-title">{{ ticket.titre }}</span>
+                        <span class="ticket-date">{{ ticket.dateCreation | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="ticket-status">
+                        <span class="status-badge" [ngClass]="ticket.statut.toLowerCase()">
+                            {{ ticket.statut }}
+                        </span>
+                    </div>
+                </div>
+                <div *ngIf="stats.latestTickets?.length === 0" class="empty-state">
+                    Aucun ticket récent.
+                </div>
+            </div>
+            <div class="card-footer">
+                <button routerLink="/tickets/new" class="btn-primary">
+                    <span class="plus">+</span> Créer un ticket
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

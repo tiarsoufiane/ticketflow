@@ -1,0 +1,41 @@
+﻿<div class="projects-container">
+    <div class="header">
+        <h1>Mes Projets</h1>
+        <p>Retrouvez ici la liste de tous vos projets en cours avec Red Tech.</p>
+    </div>
+    <div class="projects-grid" *ngIf="!loading">
+        <div class="card project-card" *ngFor="let project of projects">
+            <div class="project-header">
+                <h3>{{ project.nom }}</h3>
+                <span class="status-tag" [ngClass]="project.statut?.toLowerCase() || 'actif'">
+                    {{ project.statut || 'Actif' }}
+                </span>
+            </div>
+            <p class="description">{{ project.description }}</p>
+            <div class="project-footer">
+                <div class="dates">
+                    <div class="date-item">
+                        <span class="date-label">Début:</span>
+                        <span class="date-value">{{ (project.dateDebut | date:'dd/MM/yyyy') || 'Non définie' }}</span>
+                    </div>
+                    <div class="date-item">
+                        <span class="date-label">Livraison:</span>
+                        <span class="date-value">{{ (project.dateLivraison | date:'dd/MM/yyyy') || 'Non définie'
+                            }}</span>
+                    </div>
+                </div>
+                <a [routerLink]="['/projects', project.id]" class="btn-details">
+                    Détails →
+                </a>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement de vos projets...</p>
+    </div>
+    <div *ngIf="!loading && projects.length === 0" class="empty-state">
+        <div class="empty-icon">📁</div>
+        <p>Vous n'avez aucun projet pour le moment.</p>
+    </div>
+</div>

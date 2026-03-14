@@ -1,0 +1,13 @@
+﻿<header class="header">
+    <a *ngIf="role === 'CLIENT'" routerLink="/contact" class="contact-link">
+        Contacter l'administrateur
+    </a>
+    <div *ngIf="role !== 'CLIENT'" class="spacer"></div>
+    <div class="user-menu">
+        <div class="user-profile">
+            <img [src]="getRoleIcon()" class="actor-icon" [alt]="role">
+            <span class="username">{{ username }}</span>
+        </div>
+        <button (click)="deconnexion()" class="logout-btn">Déconnexion</button>
+    </div>
+</header>

@@ -1,0 +1,85 @@
+﻿<div class="contact-container">
+    <div class="glass-card">
+        <div class="card-header">
+            <h2>Contacter l'Administrateur</h2>
+            <p class="subtitle">Envoyez-nous un message et nous vous répondrons rapidement.</p>
+        </div>
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+            <div *ngIf="successMessage" class="alert success">
+                {{ successMessage }}
+            </div>
+            <div *ngIf="errorMessage" class="alert error">
+                <span class="icon">?</span> {{ errorMessage }}
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nomPrenom">Nom et Prénom *</label>
+                    <input type="text" id="nomPrenom" formControlName="nomPrenom" class="form-control"
+                        [class.invalid]="f['nomPrenom'].touched && f['nomPrenom'].invalid" maxlength="20" readonly>
+                    <small class="char-count">{{ contactForm.get('nomPrenom')?.value?.length || 0 }}/20</small>
+                    <div *ngIf="f['nomPrenom'].touched && f['nomPrenom'].errors" class="error-text">
+                        <span *ngIf="f['nomPrenom'].errors['required']">Ce champ est obligatoire</span>
+                        <span *ngIf="f['nomPrenom'].errors['maxlength']">Maximum 20 caractères</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="entreprise">Nom de l'entreprise</label>
+                    <input type="text" id="entreprise" formControlName="entreprise" class="form-control"
+                        [class.invalid]="f['entreprise'].touched && f['entreprise'].invalid" maxlength="20" readonly>
+                    <small class="char-count">{{ contactForm.get('entreprise')?.value?.length || 0 }}/20</small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="telephone">Numéro de téléphone *</label>
+                    <input type="tel" id="telephone" formControlName="telephone" class="form-control"
+                        [class.invalid]="f['telephone'].touched && f['telephone'].invalid" maxlength="10"
+                        placeholder="0612345678">
+                    <div *ngIf="f['telephone'].touched && f['telephone'].errors" class="error-text">
+                        <span *ngIf="f['telephone'].errors['required']">Ce champ est obligatoire</span>
+                        <span *ngIf="f['telephone'].errors['pattern']">Format: 10 chiffres exactement</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" formControlName="email" class="form-control"
+                        [class.invalid]="f['email'].touched && f['email'].invalid" readonly>
+                    <div *ngIf="f['email'].touched && f['email'].errors" class="error-text">
+                        <span *ngIf="f['email'].errors['required']">Ce champ est obligatoire</span>
+                        <span *ngIf="f['email'].errors['email']">Format d'email invalide</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="objet">Objet de la demande *</label>
+                <input type="text" id="objet" formControlName="objet" class="form-control"
+                    [class.invalid]="f['objet'].touched && f['objet'].invalid" maxlength="25"
+                    placeholder="Résumez votre demande">
+                <small class="char-count">{{ contactForm.get('objet')?.value?.length || 0 }}/25</small>
+                <div *ngIf="f['objet'].touched && f['objet'].errors" class="error-text">
+                    <span *ngIf="f['objet'].errors['required']">Ce champ est obligatoire</span>
+                    <span *ngIf="f['objet'].errors['maxlength']">Maximum 25 caractères</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="message">Message *</label>
+                <textarea id="message" formControlName="message" class="form-control textarea"
+                    [class.invalid]="f['message'].touched && f['message'].invalid" maxlength="500" rows="5"
+                    placeholder="Décrivez votre demande en détail..."></textarea>
+                <small class="char-count">{{ contactForm.get('message')?.value?.length || 0 }}/500</small>
+                <div *ngIf="f['message'].touched && f['message'].errors" class="error-text">
+                    <span *ngIf="f['message'].errors['required']">Ce champ est obligatoire</span>
+                    <span *ngIf="f['message'].errors['maxlength']">Maximum 500 caractères</span>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="goBack()">Annuler</button>
+                <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+                    <span *ngIf="!isSubmitting">Envoyer le message</span>
+                    <span *ngIf="isSubmitting">Envoi en cours...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+

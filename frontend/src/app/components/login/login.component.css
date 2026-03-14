@@ -1,0 +1,148 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.logo-text {
+  font-size: 3rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: white;
+  letter-spacing: -0.5px;
+  font-family: 'Inter', sans-serif;
+}
+
+.card-container.card {
+  max-width: 420px !important;
+  width: 100%;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  padding: 2.5rem 3rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+input.form-control {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: white !important;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  width: 100%;
+  transition: all 0.2s ease, background-color 5000s ease-in-out 0s;
+  font-size: 1rem;
+}
+
+input.form-control:focus {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05);
+  outline: none;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, #4f87ff, #b15cff) !important;
+  border: none;
+  font-weight: 600;
+  padding: 1.1rem;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+  width: 100%;
+  border-radius: 12px;
+  cursor: pointer;
+  color: white;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(79, 135, 255, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 135, 255, 0.4);
+  filter: brightness(1.1);
+}
+
+.signup-link {
+  margin-top: 2.5rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+}
+
+.signup-link a {
+  color: #a78bfa;
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 5px;
+  transition: color 0.2s;
+}
+
+.signup-link a:hover {
+  color: #c4b5fd;
+}
+
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper .form-control {
+  padding-right: 48px !important;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  z-index: 10;
+}
+
+.password-toggle-btn:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.alert-danger {
+  color: #fca5a5;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px rgba(15, 23, 42, 0.9) inset !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white;
+}

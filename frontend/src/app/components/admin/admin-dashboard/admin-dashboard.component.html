@@ -1,0 +1,30 @@
+﻿<div class="container">
+    <h2>Tableau de Bord Administrateur</h2>
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <div class="stat-value">{{ stats.totalUsers || 0 }}</div>
+            <div class="stat-label">Utilisateurs Totaux</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value">{{ stats.totalClients || 0 }}</div>
+            <div class="stat-label">Clients</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value">{{ stats.totalTechniciens || 0 }}</div>
+            <div class="stat-label">Techniciens</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value">{{ stats.totalProjets || 0 }}</div>
+            <div class="stat-label">Projets</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-value">{{ stats.totalTickets || 0 }}</div>
+            <div class="stat-label">Tickets Totaux</div>
+        </div>
+    </div>
+    <div class="alert alert-danger mt-4" *ngIf="errorMessage">
+        Erreur chargement données: {{ errorMessage }}
+        <button (click)="ngOnInit()" class="btn btn-sm btn-outline-danger">Réessayer</button>
+    </div>
+</div>
+

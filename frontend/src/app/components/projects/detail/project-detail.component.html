@@ -1,0 +1,79 @@
+﻿<div class="container" *ngIf="project">
+    <div class="header-actions">
+        <a routerLink="/projects" class="btn-back">← Mes Projets</a>
+        <div class="status-group">
+            <span class="badge status" [ngClass]="getStatusClass(project.statut)">
+                {{ formatStatus(project.statut) }}
+            </span>
+        </div>
+    </div>
+    <div class="grid">
+        <div class="left-col">
+            <div class="glass-card project-info" data-aos="fade-up">
+                <h1>{{ project.nom }}</h1>
+                <p class="description">{{ project.description }}</p>
+                <div class="details">
+                    <div class="detail-item">
+                        <span class="label">Date Début</span>
+                        <span class="value">{{ project.dateDebut | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Livraison Prévue</span>
+                        <span class="value">{{ project.dateLivraison | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card mt-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header">
+                    <h3>Tickets liés</h3>
+                    <a [routerLink]="['/tickets/new']" [queryParams]="{projetId: project.id}"
+                        class="btn-sm btn-primary">
+                        + Nouveau Ticket
+                    </a>
+                </div>
+                <div class="ticket-list">
+                    <div *ngFor="let ticket of tickets" class="ticket-item clickable"
+                        [routerLink]="['/tickets', ticket.id]">
+                        <div class="ticket-info">
+                            <strong>{{ ticket.titre }}</strong>
+                            <small>{{ ticket.dateCreation | date:'shortDate' }}</small>
+                        </div>
+                        <span class="badge status-sm" [ngClass]="ticket.statut.toLowerCase()">
+                            {{ formatStatus(ticket.statut) }}
+                        </span>
+                    </div>
+                    <div *ngIf="tickets.length === 0" class="empty-state">
+                        Aucun ticket pour ce projet.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-col">
+            <div class="glass-card stats-card" data-aos="fade-left">
+                <h3>Statistiques</h3>
+                <div class="stats-list">
+                    <div class="stat-item total">
+                        <span class="count">{{ stats.total }}</span>
+                        <span class="label">Total Tickets</span>
+                    </div>
+                    <div class="stat-item ouvert">
+                        <span class="count">{{ stats.ouvert }}</span>
+                        <span class="label">Ouverts</span>
+                    </div>
+                    <div class="stat-item en-cours">
+                        <span class="count">{{ stats.enCours }}</span>
+                        <span class="label">En cours</span>
+                    </div>
+                    <div class="stat-item resolu">
+                        <span class="count">{{ stats.resolu }}</span>
+                        <span class="label">Résolus</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner"></div>
+</div>

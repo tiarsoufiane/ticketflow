@@ -1,0 +1,77 @@
+﻿<div class="container">
+    <div class="header-actions">
+        <h2>Modifier le Projet</h2>
+        <a routerLink="/admin/projects" class="btn-secondary">Retour</a>
+    </div>
+
+    <div class="card glass-card">
+        <div *ngIf="isLoadingProject" class="text-center">Chargement...</div>
+
+        <form *ngIf="!isLoadingProject && !isSuccessful" (ngSubmit)="f.form.valid && !dateError && onSubmit()"
+            #f="ngForm" novalidate>
+            <div class="form-group">
+                <label for="clientId">Client Propriétaire *</label>
+                <select class="form-control" name="clientId" [(ngModel)]="form.clientId" required #client="ngModel">
+                    <option *ngFor="let c of clients" [value]="c.id">
+                        {{ c.nom }} {{ c.prenom }} {{ c.entreprise ? ' - ' + c.entreprise : '' }}
+                    </option>
+                </select>
+                <div class="alert-danger" *ngIf="(client.errors || form.clientId === 0) && f.submitted">
+                    Le client est requis
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="nom">Nom du Projet *</label>
+                <input type="text" class="form-control" name="nom" [(ngModel)]="form.nom" required minlength="3"
+                    #nom="ngModel" />
+                <div class="alert-danger" *ngIf="nom.errors && f.submitted">
+                    Le nom est requis (min. 3 caractères)
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea class="form-control" name="description" [(ngModel)]="form.description" rows="3" required
+                    minlength="10" #desc="ngModel"></textarea>
+                <div class="alert-danger" *ngIf="desc.errors && f.submitted">
+                    La description est requise (min. 10 caractères)
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half">
+                    <label for="dateDebut">Date de Début</label>
+                    <input type="date" class="form-control" name="dateDebut" [(ngModel)]="form.dateDebut"
+                        #debut="ngModel" />
+                </div>
+                <div class="form-group half">
+                    <label for="dateLivraison">Date de Fin Prévue *</label>
+                    <input type="date" class="form-control" name="dateLivraison" [(ngModel)]="form.dateLivraison"
+                        required #fin="ngModel" />
+                    <div class="alert-danger" *ngIf="fin.errors && f.submitted">
+                        La date de fin est requise
+                    </div>
+                    <div class="alert-danger"
+                        *ngIf="form.dateDebut && form.dateLivraison && form.dateLivraison < form.dateDebut">
+                        La date de fin doit être après la date de début
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-block"
+                [disabled]="form.dateDebut && form.dateLivraison && form.dateLivraison < form.dateDebut">
+                Enregistrer les modifications
+            </button>
+
+            <div class="alert alert-danger-box" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+        </form>
+
+        <div class="alert alert-success-box" *ngIf="isSuccessful">
+            <h3>Projet mis à jour avec succès !</h3>
+            <p>Redirection vers la liste...</p>
+        </div>
+    </div>
+</div>

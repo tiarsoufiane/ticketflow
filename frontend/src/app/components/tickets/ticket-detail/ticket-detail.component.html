@@ -1,0 +1,172 @@
+﻿<div class="container" *ngIf="ticket">
+    <div class="header-actions" data-aos="fade-right">
+        <a routerLink="/tickets" class="btn-back">← Retour à la liste</a>
+        <div class="status-group">
+            <span class="badge status" [ngClass]="ticket.statut.toLowerCase()">{{ ticket.statut }}</span>
+            <span class="badge priority" [ngClass]="ticket.priorite.toLowerCase()">{{ ticket.priorite }}</span>
+        </div>
+        <div class="action-buttons">
+            <button *ngIf="isTechnicien() && ticket.statut === 'OUVERT' && !ticket.technicien"
+                (click)="prendreEnCharge()" class="btn-take">
+                Prendre en charge
+            </button>
+            <button *ngIf="isTechnicien() && ticket.statut === 'EN_COURS' && isAssignedToMe()"
+                (click)="marquerCommeResolu()" class="btn-resolve">
+                Marquer comme résolu
+            </button>
+        </div>
+    </div>
+    <div class="detail-grid">
+        <div class="left-col">
+            <div class="glass-card ticket-info" data-aos="fade-up">
+                <h1>{{ ticket.titre }}</h1>
+                <div class="meta">
+                    <span>Projet: <strong>{{ ticket.projet.nom }}</strong></span>
+                    <span>Date: {{ ticket.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <div class="description-box">
+                    <h3>Description</h3>
+                    <p>{{ ticket.description }}</p>
+                </div>
+                <div class="people">
+                    <div class="person" *ngIf="ticket.client">
+                        <small>RAPPORTEUR</small>
+                        <div class="actor-pill">
+                            <img [src]="getRoleIcon('CLIENT')" class="actor-icon-small">
+                            <span class="name">{{ ticket.client.nom }} {{ ticket.client.prenom }}</span>
+                        </div>
+                    </div>
+                    <div class="person" *ngIf="ticket.technicien">
+                        <small>TECHNICIEN ASSIGNÉ</small>
+                        <div class="actor-pill">
+                            <img [src]="getRoleIcon('TECHNICIEN')" class="actor-icon-small">
+                            <span class="name">{{ ticket.technicien.nom }} {{ ticket.technicien.prenom }}</span>
+                        </div>
+                    </div>
+                    <div class="person" *ngIf="!ticket.technicien">
+                        <small>TECHNICIEN ASSIGNÉ</small>
+                        <div class="name italic text-muted">Pas encore assigné</div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card timeline-section mt-4" data-aos="fade-up" data-aos-delay="100">
+                <h3>Historique du Ticket</h3>
+                <div class="timeline">
+                    <div class="timeline-item done">
+                        <div class="marker"></div>
+                        <div class="content">
+                            <strong>Ouverture</strong>
+                            <small>{{ ticket.dateCreation | date:'dd/MM/yyyy HH:mm' }}</small>
+                        </div>
+                    </div>
+                    <div class="timeline-item" [class.done]="ticket.datePriseEnCharge">
+                        <div class="marker"></div>
+                        <div class="content">
+                            <strong>Prise en charge</strong>
+                            <small *ngIf="ticket.datePriseEnCharge">{{ ticket.datePriseEnCharge | date:'dd/MM/yyyy
+                                HH:mm' }}</small>
+                            <small *ngIf="!ticket.datePriseEnCharge">En attente...</small>
+                        </div>
+                    </div>
+                    <div class="timeline-item" [class.done]="ticket.dateResolution">
+                        <div class="marker"></div>
+                        <div class="content">
+                            <strong>Résolution</strong>
+                            <small *ngIf="ticket.dateResolution">{{ ticket.dateResolution | date:'dd/MM/yyyy HH:mm'
+                                }}</small>
+                            <small *ngIf="!ticket.dateResolution">En cours...</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-card mt-4" data-aos="fade-up" data-aos-delay="200" *ngIf="attachments.length > 0">
+                <h3>📎 Pièces jointes</h3>
+                <div class="attachments-list">
+                    <div class="attachment-item" *ngFor="let attachment of attachments">
+                        <div class="attachment-info">
+                            <span class="file-icon"></span>
+                            <div class="file-details">
+                                <strong>{{ attachment.nomFichier }}</strong>
+                                <small>{{ (attachment.tailleFichier / 1024).toFixed(2) }} KB</small>
+                            </div>
+                        </div>
+                        <button (click)="downloadAttachment(attachment)" class="btn-download">
+                            ⬇ Télécharger
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="right-col">
+            <div class="glass-card comments-section" data-aos="fade-left">
+                <h4>Commentaire</h4>
+                <div class="comment-list">
+                    <div class="comment-card" *ngFor="let comment of comments"
+                        [ngClass]="{ 'mine': comment.auteur?.id == currentUser?.id, 'client': comment.auteur?.role === 'CLIENT', 'technician': comment.auteur?.role === 'TECHNICIEN' }">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <img [src]="getRoleIcon(comment.auteur?.role || '')" class="actor-icon-micro">
+                                <span class="author-name">{{ comment.auteur?.nom }} {{ comment.auteur?.prenom }}</span>
+                            </div>
+                            <div class="comment-header-right">
+                                <small>{{ comment.dateCommentaire | date:'short' }}</small>
+                                <div class="comment-actions" *ngIf="canEditComment(comment)">
+                                    <button class="btn-icon" (click)="startEdit(comment)"
+                                        *ngIf="editingCommentId !== comment.id" title="Modifier">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon btn-delete" (click)="supprimerCommentaire(comment.id!)"
+                                        *ngIf="editingCommentId !== comment.id" title="Supprimer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                            </path>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment-body" *ngIf="editingCommentId !== comment.id">
+                            {{ comment.contenu }}
+                        </div>
+                        <div class="comment-edit" *ngIf="editingCommentId === comment.id">
+                            <textarea [(ngModel)]="editedContent" class="edit-textarea"></textarea>
+                            <div class="edit-actions">
+                                <button (click)="sauvegarderModification(comment.id!)"
+                                    [disabled]="!editedContent.trim()" class="btn btn-primary btn-sm">
+                                    Enregistrer
+                                </button>
+                                <button (click)="cancelEdit()" class="btn btn-secondary btn-sm">
+                                    Annuler
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="comments.length === 0" class="no-comments">
+                    Aucun message pour le moment.
+                </div>
+                <div class="comment-form mt-4">
+                    <textarea [(ngModel)]="newComment" placeholder="Votre message..."
+                        (keydown.enter)="soumettreCommentaire(); $event.preventDefault()"></textarea>
+                    <button (click)="soumettreCommentaire()" [disabled]="!newComment.trim()"
+                        class="btn btn-primary w-100">Envoyer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="loading-overlay" *ngIf="isLoading && !errorMessage">
+        <div class="spinner"></div>
+    </div>
+    <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+</div>

@@ -1,0 +1,135 @@
+﻿<div class="container">
+    <div class="header-actions">
+        <h2>
+            <span *ngIf="role === 'ADMIN'">Tous les Tickets</span>
+            <span *ngIf="role === 'CLIENT'">Mes Tickets</span>
+            <span *ngIf="role === 'TECHNICIEN'">Tickets Assignés</span>
+        </h2>
+        <a *ngIf="role === 'CLIENT'" routerLink="/tickets/new" class="btn btn-primary">
+            + Nouveau Ticket
+        </a>
+    </div>
+    <div class="filters-bar card mb-4">
+        <div class="filter-group">
+            <label>Statut</label>
+            <select class="form-control" [(ngModel)]="filters.statut" (change)="applyFilters()">
+                <option value="TOUS">Tous</option>
+                <option value="OUVERT">Ouvert</option>
+                <option value="EN_COURS">En cours</option>
+                <option value="RESOLU">Résolu</option>
+                <option value="FERME">Fermé</option>
+            </select>
+        </div>
+        <div class="filter-group" *ngIf="role === 'CLIENT' || role === 'ADMIN'">
+            <label>Projet</label>
+            <select class="form-control" [(ngModel)]="filters.projetId" (change)="applyFilters()">
+                <option [value]="0">Tous les projets</option>
+                <option *ngFor="let p of projects" [value]="p.id">{{ p.nom }}</option>
+            </select>
+        </div>
+        <div class="filter-group search">
+            <label>Recherche</label>
+            <input type="text" class="form-control" [(ngModel)]="filters.search" (input)="applyFilters()"
+                placeholder="Titre ou description...">
+        </div>
+    </div>
+    <div class="table-container">
+        <table class="glass-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Sujet</th>
+                    <th>Priorité</th>
+                    <th>Projet</th>
+                    <th *ngIf="role !== 'TECHNICIEN'">Technicien</th>
+                    <th>Date Création</th>
+                    <th>Statut</th>
+                    <th *ngIf="role !== 'CLIENT'">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let ticket of filteredTickets" [routerLink]="['/tickets', ticket.id]" class="clickable">
+                    <td>#{{ ticket.id }}</td>
+                    <td><b>{{ ticket.titre }}</b></td>
+                    <td>
+                        <span class="badge priority" [ngClass]="ticket.priorite.toLowerCase()">
+                            {{ ticket.priorite }}
+                        </span>
+                    </td>
+                    <td>{{ ticket.projet.nom }}</td>
+                    <td *ngIf="role !== 'TECHNICIEN'" (click)="$event.stopPropagation()">
+                        <span>
+                            {{ (ticket.technicien?.nom && ticket.technicien?.prenom) ? (ticket.technicien?.nom + ' ' + ticket.technicien?.prenom) : 'Non assigné' }}
+                        </span>
+                    </td>
+                    <td>{{ ticket.dateCreation | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                        <span class="badge status" [ngClass]="ticket.statut.toLowerCase()">
+                            {{ ticket.statut }}
+                        </span>
+                    </td>
+                    <td *ngIf="role !== 'CLIENT'" class="action-cell" (click)="$event.stopPropagation()">
+                        <div *ngIf="role === 'ADMIN'">
+                            <ng-container *ngIf="editingTicketId === ticket.id; else adminDefaultActions">
+                                <select class="form-control-sm" [(ngModel)]="editTechnicienId">
+                                    <option [ngValue]="null">-- Aucun --</option>
+                                    <option *ngFor="let tech of techniciens" [ngValue]="tech.id">{{ tech.nom }} {{ tech.prenom }}</option>
+                                </select>
+                                <select class="form-control-sm" [(ngModel)]="editStatus">
+                                    <option value="OUVERT">OUVERT</option>
+                                    <option value="EN_COURS">EN_COURS</option>
+                                    <option value="RESOLU">RESOLU</option>
+                                    <option value="FERME">FERME</option>
+                                </select>
+                                <button class="btn-save" (click)="saveEdit(ticket, $event)">Enregistrer</button>
+                                <button class="btn-cancel" (click)="cancelEdit($event)">Annuler</button>
+                            </ng-container>
+                            <ng-template #adminDefaultActions>
+                                <div class="actions">
+                                    <button (click)="startEdit(ticket, $event)" class="btn-icon edit" title="Modifier">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
+                                        </svg>
+                                    </button>
+                                    <button (click)="deleteTicket(ticket, $event)" class="btn-icon delete" title="Supprimer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.34 9m-4.72 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div *ngIf="role === 'TECHNICIEN'" class="tech-actions">
+                            <button *ngIf="ticket.statut === 'OUVERT' && !ticket.technicien"
+                                (click)="takeCharge(ticket)"
+                                class="btn-take"
+                                title="Prendre en charge ce ticket">
+                                Prendre
+                            </button>
+                            <button *ngIf="ticket.statut === 'OUVERT' && isAssignedToMe(ticket)"
+                                (click)="markAsInProgress(ticket)"
+                                class="btn-start"
+                                title="Commencer le travail">
+                                Commencer
+                            </button>
+                            <button *ngIf="ticket.statut === 'EN_COURS' && isAssignedToMe(ticket)"
+                                (click)="resolveTicket(ticket)"
+                                class="btn-resolve"
+                                title="Marquer comme résolu">
+                                Résoudre
+                            </button>
+                            <span *ngIf="(ticket.statut !== 'OUVERT' && ticket.statut !== 'EN_COURS') || (ticket.statut === 'OUVERT' && ticket.technicien && !isAssignedToMe(ticket)) || (ticket.statut === 'EN_COURS' && !isAssignedToMe(ticket))"
+                                class="text-muted">
+                                -
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="filteredTickets.length === 0">
+                    <td colspan="8" class="text-center">Aucun ticket trouvé.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

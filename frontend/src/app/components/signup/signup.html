@@ -1,0 +1,65 @@
+﻿<div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+    <div class="card" style="width: 100%; max-width: 500px;">
+        <h2 style="text-align: center;">Inscription</h2>
+        <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isSuccessful">
+            <div style="display: flex; gap: 1rem;">
+                <div style="flex: 1;">
+                    <label>Prénom</label>
+                    <input type="text" name="prenom" [(ngModel)]="form.prenom" required>
+                </div>
+                <div style="flex: 1;">
+                    <label>Nom</label>
+                    <input type="text" name="nom" [(ngModel)]="form.nom" required>
+                </div>
+            </div>
+            <label>Email (ex: nom@ticketflow.com)</label>
+            <input type="email" name="email" [(ngModel)]="form.email" required
+                pattern="[a-zA-Z0-9._\-]+@ticketflow\.com" placeholder="nom@ticketflow.com">
+            <div *ngIf="f.submitted && !f.controls['email']?.valid" style="color: red; font-size: 0.8rem;">
+                Email doit finir par @ticketflow.com
+            </div>
+            <label>Mot de passe</label>
+            <input type="password" name="password" [(ngModel)]="form.password" required minlength="6" maxlength="12"
+                #password="ngModel">
+            <div *ngIf="(password.dirty || f.submitted) && (password.errors?.['minlength'] || password.errors?.['maxlength'])"
+                style="color: red; font-size: 0.8rem; margin-bottom: 0.5rem;">
+                Le mot de passe doit contenir entre 6 et 12 caractères
+            </div>
+            <label>Vous êtes ?</label>
+            <select name="role" [(ngModel)]="form.role"
+                style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; margin-bottom: 1rem;">
+                <option value="CLIENT">Client (Entreprise)</option>
+                <option value="TECHNICIEN">Technicien</option>
+            </select>
+            <div *ngIf="form.role === 'CLIENT'">
+                <label>Nom de l'entreprise</label>
+                <input type="text" name="entreprise" [(ngModel)]="form.entreprise" required>
+                <label>Téléphone</label>
+                <input type="tel" name="telephone" [(ngModel)]="form.telephone" required>
+            </div>
+            <div *ngIf="form.role === 'TECHNICIEN'">
+                <label>Spécialité (ex: Réseau, Java, React)</label>
+                <input type="text" name="specialite" [(ngModel)]="form.specialite">
+            </div>
+            <div *ngIf="isSignUpFailed" style="color: #ef4444; margin-bottom: 1rem; text-align: center;">
+                {{ errorMessage }}
+            </div>
+            <button type="submit" class="btn" style="width: 100%;" [disabled]="!f.valid"
+                [style.opacity]="f.valid ? '1' : '0.5'">S'inscrire</button>
+            <p style="text-align: center; margin-top: 1rem; color: #64748b;">
+                Déjà un compte ? <a routerLink="/login" style="color: var(--primary-color); text-decoration: none;">Se
+                    connecter</a>
+            </p>
+        </form>
+        <div *ngIf="isSuccessful" style="text-align: center;">
+            <h3 style="color: #22c55e;">Inscription réussie !</h3>
+            <p>Votre compte a été créé avec succès.</p>
+            <p style="color: #ea580c; font-weight: 500;">
+                Votre compte est en attente de validation par un administrateur. <br>
+                Vous ne pourrez vous connecter qu'après validation.
+            </p>
+            <a href="/login" class="btn" style="display: inline-block; text-decoration: none; margin-top: 1rem;">Retour
+                à la connexion</a>
+        </div>
+    </div>
+</div>

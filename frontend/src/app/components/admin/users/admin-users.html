@@ -1,0 +1,51 @@
+﻿<div class="container">
+    <div class="header-actions">
+        <h2>Validations en attente</h2>
+    </div>
+
+    <div *ngIf="message" class="alert alert-success mt-3">
+        {{ message }}
+    </div>
+
+    <div class="glass-table-container mt-4">
+        <table class="glass-table">
+            <thead>
+                <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Infos</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let user of utilisateursEnAttente">
+                    <td class="user-cell">
+                        <img [src]="getRoleIcon(user.role)" class="user-icon" alt="role">
+                        <div class="user-info">
+                            <span class="user-name">{{ user.prenom }} {{ user.nom }}</span>
+                            <span class="user-role">{{ user.role }}</span>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <div *ngIf="user.entreprise" class="extra-info">
+                            <strong>Entreprise:</strong> {{ user.entreprise }}
+                        </div>
+                        <div *ngIf="user.specialite" class="extra-info">
+                            <strong>Spécialité:</strong> {{ user.specialite }}
+                        </div>
+                    </td>
+                    <td>
+                        <button (click)="validateUser(user.id)" [class.confirm]="idEnConfirmation === user.id"
+                            class="btn-validate">
+                            {{ idEnConfirmation === user.id ? 'Confirmer ?' : 'Valider' }}
+                        </button>
+                    </td>
+                </tr>
+                <tr *ngIf="utilisateursEnAttente.length === 0">
+                    <td colspan="4" class="text-center">Aucun utilisateur en attente de validation.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

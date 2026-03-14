@@ -1,0 +1,98 @@
+﻿<div class="inbox-container">
+    <div class="glass-card">
+        <div class="card-header">
+            <h2>Messages Reçus</h2>
+            <span class="message-count">{{ messages.length }} message(s)</span>
+        </div>
+        <div *ngIf="isLoading" class="loading">
+            Chargement des messages...
+        </div>
+        <div *ngIf="!isLoading && messages.length === 0" class="empty-state">
+            <span class="icon"></span>
+            <p>Aucun message reçu</p>
+        </div>
+        <div *ngIf="!isLoading && messages.length > 0" class="message-list">
+            <div *ngFor="let message of messages" class="message-item" [class.unread]="!message.lu"
+                [class.replied]="message.reponse" (click)="ouvrirMessage(message)">
+                <div class="message-header">
+                    <span class="sender">{{ message.nomPrenom }}</span>
+                    <span class="date">{{ formaterDate(message.dateEnvoi) }}</span>
+                </div>
+                <div class="message-subject">{{ message.objet }}</div>
+                <div class="message-preview">{{ message.message | slice:0:80 }}...</div>
+                <span *ngIf="message.reponse" class="replied-badge">Répondu</span>
+                <button class="delete-btn" (click)="supprimerMessage(message, $event)" title="Supprimer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"></path>
+                        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="selectedMessage" class="modal-overlay" (click)="fermerMessage()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <button class="close-btn" (click)="fermerMessage()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <h3>{{ selectedMessage.objet }}</h3>
+            </div>
+            <div class="modal-body">
+                <div class="info-row">
+                    <span class="label">De:</span>
+                    <span class="value">{{ selectedMessage.nomPrenom }}</span>
+                </div>
+                <div class="info-row" *ngIf="selectedMessage.entreprise">
+                    <span class="label">Entreprise:</span>
+                    <span class="value">{{ selectedMessage.entreprise }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ selectedMessage.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Téléphone:</span>
+                    <span class="value">{{ selectedMessage.telephone }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date:</span>
+                    <span class="value">{{ formaterDate(selectedMessage.dateEnvoi) }}</span>
+                </div>
+                <div class="message-content">
+                    <span class="label">Message:</span>
+                    <p>{{ selectedMessage.message }}</p>
+                </div>
+                <div *ngIf="selectedMessage.reponse" class="reply-section existing-reply">
+                    <span class="label">Réponse envoyée le {{ formaterDate(selectedMessage.dateReponse!) }}:</span>
+                    <p class="reply-text">{{ selectedMessage.reponse }}</p>
+                </div>
+                <div *ngIf="selectedMessage.reponseClient" class="reply-section client-reply">
+                    <span class="label">Réponse du client ({{ formaterDate(selectedMessage.dateReponseClient!)
+                        }}):</span>
+                    <p class="reply-text">{{ selectedMessage.reponseClient }}</p>
+                </div>
+                <div *ngIf="!selectedMessage.reponse || selectedMessage.reponseClient" class="reply-section">
+                    <span class="label">{{ selectedMessage.reponse ? 'Nouvelle réponse :' : 'Répondre :' }}</span>
+                    <textarea [(ngModel)]="replyText" class="reply-input" placeholder="Écrivez votre réponse..."
+                        rows="4" maxlength="1000"></textarea>
+                    <small class="char-count">{{ replyText.length }}/1000</small>
+                    <div class="reply-actions">
+                        <button class="btn-reply" (click)="envoyerReponse()"
+                            [disabled]="!replyText.trim() || isReplying">
+                            {{ isReplying ? 'Envoi...' : 'Envoyer la réponse' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

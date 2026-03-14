@@ -1,0 +1,66 @@
+﻿<div class="messages-container">
+    <div class="glass-card">
+        <div class="card-header">
+            <h2>Mes Messages</h2>
+            <span class="message-count">{{ messages.length }} message(s)</span>
+        </div>
+        <div *ngIf="isLoading" class="loading">
+            Chargement des messages...
+        </div>
+        <div *ngIf="!isLoading && messages.length === 0" class="empty-state">
+            <p>Aucun message envoyé</p>
+        </div>
+        <div *ngIf="!isLoading && messages.length > 0" class="message-list">
+            <div *ngFor="let message of messages" class="message-item" [class.has-reply]="message.reponse"
+                [class.unread-reply]="message.reponse && !message.luParClient" (click)="ouvrirMessage(message)">
+                <div class="message-header">
+                    <span class="subject">{{ message.objet }}</span>
+                    <span class="date">{{ formaterDate(message.dateEnvoi) }}</span>
+                </div>
+                <div class="message-preview">{{ message.message | slice:0:80 }}...</div>
+                <span *ngIf="message.reponse && !message.luParClient" class="new-reply-badge">Nouvelle réponse</span>
+                <span *ngIf="message.reponse && message.luParClient" class="replied-badge">Répondu</span>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="selectedMessage" class="modal-overlay" (click)="fermerMessage()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <button class="close-btn" (click)="fermerMessage()">←</button>
+            <div class="modal-header">
+                <h3>{{ selectedMessage.objet }}</h3>
+            </div>
+            <div class="modal-body">
+                <div class="info-row">
+                    <span class="label">Date d'envoi:</span>
+                    <span class="value">{{ formaterDate(selectedMessage.dateEnvoi) }}</span>
+                </div>
+                <div class="message-content">
+                    <span class="label">Votre message:</span>
+                    <p>{{ selectedMessage.message }}</p>
+                </div>
+                <div *ngIf="selectedMessage.reponse" class="reply-section admin-reply">
+                    <span class="label">Réponse de l'administrateur ({{ formaterDate(selectedMessage.dateReponse!)
+                        }}):</span>
+                    <p class="reply-text">{{ selectedMessage.reponse }}</p>
+                </div>
+                <div *ngIf="selectedMessage.reponseClient" class="reply-section client-reply">
+                    <span class="label">Votre réponse ({{ formaterDate(selectedMessage.dateReponseClient!) }}):</span>
+                    <p class="reply-text">{{ selectedMessage.reponseClient }}</p>
+                </div>
+                <div *ngIf="selectedMessage.reponse" class="reply-section">
+                    <span class="label">{{ selectedMessage.reponseClient ? 'Nouvelle réponse :' : 'Répondre à
+                        l\'administrateur :' }}</span>
+                    <textarea [(ngModel)]="replyText" class="reply-input" placeholder="Écrivez votre réponse..."
+                        rows="4" maxlength="1000"></textarea>
+                    <small class="char-count">{{ replyText.length }}/1000</small>
+                    <div class="reply-actions">
+                        <button class="btn-reply" (click)="envoyerReponse()" [disabled]="!replyText.trim() || isReplying">
+                            {{ isReplying ? 'Envoi...' : 'Envoyer la réponse' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,68 @@
+﻿<div class="sidebar">
+    <div class="logo">
+        <h2><span class="word-t">Ticket</span><span class="word-f">Flow</span></h2>
+    </div>
+    <nav>
+        <ul>
+            <li *ngIf="role === 'ADMIN'">
+                <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    Tableau de bord
+                </a>
+            </li>
+            <li *ngIf="role === 'ADMIN'">
+                <a routerLink="/admin/users/pending" routerLinkActive="active">
+                    Validations
+                </a>
+            </li>
+            <li *ngIf="role === 'CLIENT'">
+                <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                    Tableau de bord
+                </a>
+            </li>
+            <li *ngIf="role === 'TECHNICIEN'">
+                <a routerLink="/technicien-dashboard" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }">
+                    Tableau de bord
+                </a>
+            </li>
+            <li *ngIf="role === 'CLIENT'">
+                <a routerLink="/projects" routerLinkActive="active">Mes Projets</a>
+            </li>
+            <li *ngIf="role === 'CLIENT'">
+                <a routerLink="/tickets" routerLinkActive="active">Mes Tickets</a>
+            </li>
+            <li *ngIf="role === 'CLIENT'">
+                <a routerLink="/client/messages" routerLinkActive="active" class="messages-link">
+                    Mes messages
+                    <span *ngIf="clientUnreadCount > 0" class="badge-notification">{{ clientUnreadCount }}</span>
+                </a>
+            </li>
+            <li *ngIf="role === 'TECHNICIEN'">
+                <a routerLink="/tickets/assigned" routerLinkActive="active">Tickets Assignés</a>
+            </li>
+            <li *ngIf="role === 'ADMIN'">
+                <a routerLink="/admin/clients" routerLinkActive="active">Clients</a>
+            </li>
+            <li *ngIf="role === 'ADMIN'">
+                <a routerLink="/admin/techniciens" routerLinkActive="active">Techniciens</a>
+            </li>
+            <li *ngIf="role === 'ADMIN'">
+                <a routerLink="/admin/projects" routerLinkActive="active">Projets</a>
+            </li>
+            <li *ngIf="role === 'ADMIN'">
+                <a routerLink="/tickets" routerLinkActive="active">Tous les Tickets</a>
+            </li>
+            <li *ngIf="role === 'ADMIN'">
+                <a routerLink="/admin/messages" routerLinkActive="active" class="messages-link">
+                    Messages reçus
+                    <span *ngIf="unreadCount > 0" class="badge-notification">{{ unreadCount }}</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="logout-section">
+        <button (click)="deconnexion()" class="btn-logout">
+            Déconnexion
+        </button>
+    </div>
+</div>
