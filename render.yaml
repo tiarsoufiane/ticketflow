@@ -19,9 +19,9 @@ services:
       - key: JWT_SECRET
         generateValue: true
 
-      # URL de votre frontend Vercel (pour CORS)
+      # URL du frontend Vercel (pour CORS)
       - key: FRONTEND_URL
-        value: https://your-app.vercel.app   # ← Remplacez par votre URL Vercel réelle
+        value: https://ticketflow-app.vercel.app
 
       # DATABASE_URL construit manuellement à partir des infos de la BDD Render MySQL
       # Format attendu par application-prod.properties :
