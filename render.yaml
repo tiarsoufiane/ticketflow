@@ -1,0 +1,46 @@
+databases:
+  - name: ticketflow-db
+    databaseName: ticketflow
+    user: ticketflow_user
+    plan: free
+
+services:
+  - type: web
+    name: ticketflow-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /api/auth/ping
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # JWT – valeur auto-générée par Render (64 caractères hex sécurisés)
+      - key: JWT_SECRET
+        generateValue: true
+
+      # URL de votre frontend Vercel (pour CORS)
+      - key: FRONTEND_URL
+        value: https://your-app.vercel.app   # ← Remplacez par votre URL Vercel réelle
+
+      # DATABASE_URL construit manuellement à partir des infos de la BDD Render MySQL
+      # Format attendu par application-prod.properties :
+      #   jdbc:mysql://<host>:<port>/<database>?createDatabaseIfNotExist=true&serverTimezone=UTC
+      # ⚠️  Render ne génère pas encore l'URL JDBC automatiquement pour MySQL ;
+      #     vous devrez la saisir manuellement dans le dashboard Render après création.
+      - key: DATABASE_URL
+        sync: false   # saisie manuelle dans le dashboard Render
+
+      - key: DB_USERNAME
+        fromDatabase:
+          name: ticketflow-db
+          property: user
+
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: ticketflow-db
+          property: password
+
+      # Port interne du conteneur
+      - key: PORT
+        value: "8080"

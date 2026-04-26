@@ -1,36 +1,54 @@
-# TicketFlow - Guide de Déploiement Gratuit
+# TicketFlow - Guide de Déploiement
 
-## 🚀 Déploiement Backend sur Railway.app
+## 🚀 Déploiement Backend sur Render.com
 
-### 1. Créer un compte Railway
-- Aller sur [railway.app](https://railway.app)
+> Le projet inclut un fichier `render.yaml` (Blueprint) qui automatise la création
+> du service web et de la base de données MySQL sur Render.
+
+### 1. Créer un compte Render
+- Aller sur [render.com](https://render.com)
 - Se connecter avec GitHub
 
-### 2. Créer un nouveau projet
-1. Cliquer sur "New Project"
-2. Choisir "Deploy from GitHub repo"
-3. Sélectionner votre repository (pousser le code sur GitHub d'abord)
-4. Railway détectera automatiquement le projet Spring Boot
+### 2. Créer le Blueprint (infrastructure as code)
+1. Dans le dashboard Render, cliquer sur **New → Blueprint**
+2. Connecter votre repository GitHub `tiarsoufiane/ticketflow`
+3. Render détecte automatiquement `render.yaml` et crée :
+   - La base de données MySQL **`ticketflow-db`** (plan free)
+   - Le service web Docker **`ticketflow-backend`** (plan free)
 
-### 3. Ajouter MySQL
-1. Dans votre projet Railway, cliquer sur "+ New"
-2. Choisir "Database" → "Add MySQL"
-3. Railway créera automatiquement la variable `DATABASE_URL`
+### 3. Configurer les variables d'environnement
+La plupart des variables sont auto-injectées par Render via le Blueprint.
+La seule variable à saisir **manuellement** dans le dashboard est :
 
-### 4. Configurer les variables d'environnement
-Dans les settings de votre service backend, ajouter :
+| Variable | Valeur |
+|---|---|
+| `DATABASE_URL` | `jdbc:mysql://<host>:<port>/ticketflow?createDatabaseIfNotExist=true&serverTimezone=UTC` |
+| `FRONTEND_URL` | `https://votre-app.vercel.app` *(après déploiement Vercel)* |
+
+> **Comment trouver host/port ?**
+> Dashboard Render → `ticketflow-db` → onglet **Info** → copiez *Hostname* et *Port*.
+
+Les variables suivantes sont gérées automatiquement par le Blueprint :
+
 ```
 SPRING_PROFILES_ACTIVE=prod
-DATABASE_URL=(auto-généré par Railway)
-DB_USERNAME=(auto-généré par Railway)
-DB_PASSWORD=(auto-généré par Railway)
-JWT_SECRET=VotreCléSecrèteJWT256Bits
-FRONTEND_URL=https://votre-app.vercel.app
+JWT_SECRET=(généré automatiquement par Render)
+DB_USERNAME=(injecté depuis ticketflow-db)
+DB_PASSWORD=(injecté depuis ticketflow-db)
+PORT=8080
 ```
 
-### 5. Déployer
-- Railway déploie automatiquement à chaque push sur GitHub
-- URL du backend : `https://votre-app.up.railway.app`
+### 4. Déployer
+- Render déclenche un build Docker automatiquement à chaque `git push` sur `main`
+- URL du backend : `https://ticketflow-backend.onrender.com`
+
+### 5. Vérifier le démarrage
+Consulter les logs dans : **Dashboard → ticketflow-backend → Logs**
+
+Tester l'endpoint de santé :
+```
+GET https://ticketflow-backend.onrender.com/api/auth/ping
+```
 
 ---
 
@@ -41,15 +59,14 @@ FRONTEND_URL=https://votre-app.vercel.app
 - Se connecter avec GitHub
 
 ### 2. Importer le projet
-1. Cliquer sur "Add New..." → "Project"
-2. Importer votre repository GitHub
+1. Cliquer sur **Add New... → Project**
+2. Importer le repository `tiarsoufiane/ticketflow`
 3. Root Directory : `frontend`
 4. Framework Preset : Détection automatique (Angular)
 
-### 3. Configurer les variables d'environnement (optionnel)
-Si vous utilisez des variables d'environnement Angular :
+### 3. Configurer les variables d'environnement
 ```
-BACKEND_API_URL=https://votre-backend.up.railway.app
+BACKEND_API_URL=https://ticketflow-backend.onrender.com
 ```
 
 ### 4. Configuration du Build
@@ -58,8 +75,12 @@ BACKEND_API_URL=https://votre-backend.up.railway.app
 - Install Command : `npm install`
 
 ### 5. Déployer
-- Vercel déploie automatiquement
+- Vercel déploie automatiquement à chaque push
 - URL : `https://votre-app.vercel.app`
+
+### 6. Mettre à jour FRONTEND_URL sur Render
+Une fois l'URL Vercel connue, retourner dans **Dashboard Render → ticketflow-backend → Environment**
+et mettre à jour `FRONTEND_URL` avec l'URL Vercel exacte.
 
 ---
 
@@ -68,36 +89,45 @@ BACKEND_API_URL=https://votre-backend.up.railway.app
 ### 1. Pousser le code sur GitHub
 ```bash
 git add .
-git commit -m "Mise à jour version Premium"
+git commit -m "Migration Railway → Render"
 git push origin main
 ```
 
 ### 2. Mettre à jour les URLs
-Vérifiez que `frontend/src/environments/environment.prod.ts` contient la bonne URL de votre backend Railway.
+Vérifiez que `frontend/src/environments/environment.prod.ts` contient la bonne URL Render :
+```typescript
+apiUrl: 'https://ticketflow-backend.onrender.com/api'
+```
 
 ### 3. Configurer CORS
-Le backend est configuré pour autoriser les requêtes provenant de votre domaine Vercel via la variable `FRONTEND_URL`.
+Le backend lit la variable `FRONTEND_URL` pour autoriser les requêtes CORS.
+Assurez-vous qu'elle correspond exactement à votre domaine Vercel.
 
 ---
 
 ## 🏗️ Stack Technique de Déploiement
 
-- **Backend** : Java 21 (Amazon Corretto / OpenJDK)
-- **Framework** : Spring Boot 3.3.0
-- **Frontend** : Angular 21 (v19/v21 core)
-- **Build Tool** : Maven 3.9+ / Node 20+
+| Couche | Technologie | Hébergement |
+|---|---|---|
+| Backend | Java 21 + Spring Boot 3.3 | Render (Docker) |
+| Base de données | MySQL 8 | Render (managed DB) |
+| Frontend | Angular 19+ | Vercel |
+| Build | Maven 3.9 / Node 20 | CI/CD automatique |
 
 ---
 
-## 🎯 Alternatives & Conseils
+## 🎯 Conseils
 
-1. **Sécurité** : Changez impérativement `JWT_SECRET` dans les variables d'environnement Railway.
-2. **Logs** : Utilisez `railway logs` ou l'interface web pour débugger le démarrage.
-3. **Database** : MySQL sur Railway est limité à 1Go en mode gratuit, ce qui est largement suffisant pour TicketFlow.
+1. **Sécurité** : `JWT_SECRET` est auto-généré par Render — ne le partagez pas.
+2. **Logs** : Dashboard Render → service → **Logs** pour débugger le démarrage.
+3. **Cold Start** : Le plan gratuit Render met le service en veille après 15 min d'inactivité. Le premier appel peut prendre ~30 s.
+4. **Database** : MySQL sur Render Free est limité à 1 Go — largement suffisant pour TicketFlow.
+5. **DATABASE_URL** : Doit être au format JDBC, pas une URL standard. Exemple :
+   `jdbc:mysql://oregon-mysql.render.com:3306/ticketflow?createDatabaseIfNotExist=true&serverTimezone=UTC`
 
 ---
 
-**Besoin d'aide ?** 
-- Railway Support : https://docs.railway.app
-- Vercel Support : https://vercel.com/docs
+**Besoin d'aide ?**
+- Render Docs : https://render.com/docs
+- Vercel Docs : https://vercel.com/docs
 - Support RedTech : support@redtech.com
