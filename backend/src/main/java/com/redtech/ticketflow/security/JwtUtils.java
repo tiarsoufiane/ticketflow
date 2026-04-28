@@ -43,6 +43,8 @@ public class JwtUtils {
             logger.error("Token JWT expiré: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
             logger.error("Token JWT non supporté: {}", e.getMessage());
+        } catch (io.jsonwebtoken.security.SignatureException e) {
+            logger.error("Signature JWT invalide: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
             logger.error("La chaîne claims JWT est vide: {}", e.getMessage());
         }
