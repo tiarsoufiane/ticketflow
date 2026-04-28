@@ -1,4 +1,5 @@
-export const API_CONFIG = {
-  baseUrl: 'https://ticketflow-production-5bed.up.railway.app'
-};
+import { environment } from '../../environments/environment';
 
+export const API_CONFIG = {
+  baseUrl: environment.apiUrl
+};
