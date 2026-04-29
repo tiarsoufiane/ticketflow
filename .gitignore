@@ -5,6 +5,7 @@
 *.swp
 *~
 
+# Backend build artifacts
 backend/target/
 backend/uploads/tickets/*
 !backend/uploads/tickets/.gitkeep
@@ -12,14 +13,60 @@ backend/*.log
 backend/*.err
 backend/startup_*.txt
 
+# Frontend build artifacts
 frontend/node_modules/
 frontend/dist/
 frontend/.angular/
 frontend/.vscode/
 frontend/*.log
 
+# Environment and Configuration Files
 .env
 .env.local
 .env.production
+.env.*.local
+
+# Security: DO NOT COMMIT THESE FILES
+backend/src/main/resources/application-*.local.properties
+backend/src/main/resources/application-prod.properties.local
+backend/src/main/resources/secrets.properties
+backend/src/main/resources/.env
+
+# IDE
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Deployment files
 render.yaml
+railway.toml
+vercel.json
+
+# Documentation files (local only - NOT committed to Git in production)
+# Exception: Keep README.md and GUIDE_DEMARRAGE.md for users
+*.md
+!README.md
+!frontend/README.md
+!GUIDE_DEMARRAGE.md
+
+# Additional production ignores
 DEPLOYMENT.md
+DEPLOYMENT_REPORT.md
+PRODUCTION_DEPLOYMENT_GUIDE.md
+RAPPORT_ANALYSE.md
+CORRECTIONS_APPLIQUEES.md
+RESUME_FINAL.md
+ENV_CONFIGURATION.md
+00_START_HERE.md
+INDEX_FICHIERS.md
+QUICK_COMMANDS.md
+FINAL_STATUS_REPORT.txt
+VISUAL_SUMMARY.txt
+verify-corrections*.ps1
+verify-corrections*.bat
+verify-corrections*.sh
+generate-jwt-secret*

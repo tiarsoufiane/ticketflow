@@ -36,8 +36,6 @@ public class CommentaireController {
                 .map(a -> a.getAuthority())
                 .anyMatch(auth -> auth != null && auth.contains("ADMIN"));
         boolean isClientOwner = ticket.getClient().getId().equals(userDetails.getId());
-        boolean isTechAssigned = ticket.getTechnicien() != null
-                && ticket.getTechnicien().getId().equals(userDetails.getId());
         boolean isTechnicien = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_TECHNICIEN"));
         if (!isAdmin && !isTechnicien && !isClientOwner) {
@@ -78,8 +76,6 @@ public class CommentaireController {
                 .map(a -> a.getAuthority())
                 .anyMatch(auth -> auth != null && auth.contains("ADMIN"));
         boolean isClientOwner = ticket.getClient().getId().equals(userDetails.getId());
-        boolean isTechAssigned = ticket.getTechnicien() != null
-                && ticket.getTechnicien().getId().equals(userDetails.getId());
         boolean isTechnicien = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_TECHNICIEN"));
         if (!isAdmin && !isTechnicien && !isClientOwner) {
