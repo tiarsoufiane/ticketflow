@@ -5,3 +5,5 @@ mvnw
 mvnw.cmd
 *.log
 *.err
+render.yaml
+DEPLOYMENT.md
