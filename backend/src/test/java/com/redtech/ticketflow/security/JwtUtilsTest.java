@@ -65,6 +65,7 @@ class JwtUtilsTest {
         client.setNom("Test");
         client.setPrenom("User");
         client.setActif(true);
+        client.setRole(com.redtech.ticketflow.entity.enums.Role.CLIENT);
         return client;
     }
 }
