@@ -23,7 +23,8 @@ public class FileStorageService {
         if (fichier.getSize() > 2 * 1024 * 1024) {
             throw new RuntimeException("La taille du fichier dépasse la limite maximale de 2 Mo");
         }
-        String nomFichierOriginal = StringUtils.cleanPath(fichier.getOriginalFilename());
+        String nomFichierOriginal = StringUtils.cleanPath(fichier.getOriginalFilename() != null ? 
+            fichier.getOriginalFilename() : "fichier");
         String nomFichier = ticketId + "_" + System.currentTimeMillis() + "_" + nomFichierOriginal;
         Path emplacementCible = this.emplacementStockage.resolve(nomFichier);
         Files.copy(fichier.getInputStream(), emplacementCible, StandardCopyOption.REPLACE_EXISTING);

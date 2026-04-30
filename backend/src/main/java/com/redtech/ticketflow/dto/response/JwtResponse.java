@@ -1,6 +1,5 @@
 package com.redtech.ticketflow.dto.response;
 import lombok.Data;
-import java.util.List;
 @Data
 public class JwtResponse {
     private String token;
